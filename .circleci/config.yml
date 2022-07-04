@@ -155,6 +155,7 @@ jobs:
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
       - notify_on_failure
+
   scan-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -436,8 +437,8 @@ workflows:
           requires: [test-frontend]
       - scan-backend:
           requires: [test-backend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
       #       branches:
       #         only: [main]
@@ -455,5 +456,5 @@ workflows:
 #           requires: [smoke-test]
 #       - cleanup:
 #           requires: [cloudfront-update]
-      # - notify_on_success:
-      #     requires: [deploy-infrastructure]
+      - notify_on_success:
+          requires: [deploy-infrastructure]
