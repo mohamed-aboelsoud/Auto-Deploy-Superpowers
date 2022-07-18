@@ -8,11 +8,6 @@ defaults:
     docker:
       - image: cimg/node:13.8.0
   
-defaults:   
-  &container2
-    docker:
-      - image: cimg/base:stable
-
 commands:
   notify_on_failure:
     steps:
@@ -91,32 +86,32 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-deps]
+          keys: [frontend-cache]
       - run:
           name: Build front-end
           command: |
             cd frontend
-            npm install
+            npm i
             npm run build
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-deps
+          key: frontend-cache
       - notify_on_failure
   build-backend:
     <<: *container1
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-cache]
       - run:
           name: Back-end build
           command: |
             cd backend
-            npm install
+            npm i
             npm run build
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-deps
+          key: backend-cache
       - notify_on_failure
 
   test-frontend:
@@ -124,12 +119,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-deps]
+          keys: [frontend-cache]
       - run:
           name: Front-end Unit Test
           command: |
             cd frontend
-            npm install
+            npm i
             npm test
       - notify_on_failure
   test-backend:
@@ -137,12 +132,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-cache]
       - run:
           name: Back-end Unit Test
           command: |
             cd backend
-            npm install
+            npm i
             npm test
       - notify_on_failure
 
@@ -151,12 +146,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-deps]
+          keys: [frontend-cache]
       - run:
           name: Front-end Scan
           command: |
             cd frontend
-            npm install
+            npm i
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
       - notify_on_failure
@@ -166,19 +161,20 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-cache]
       - run:
           name: Back-end Scan
           command: |
             cd backend
-            npm install
+            npm i
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
       - notify_on_failure
 
   notify_on_success:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - slack/notify:
           event: pass
@@ -186,7 +182,8 @@ jobs:
           template: success_tagged_deploy_1
 
   deploy-infrastructure:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
@@ -223,7 +220,8 @@ jobs:
       - notify_on_failure
       
   configure-infrastructure:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
@@ -242,7 +240,8 @@ jobs:
       - notify_on_failure
 
   run-migrations:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
@@ -250,7 +249,7 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm install
+            npm i
             npm -v
             npm run migrations > migrations_dump.txt
      
@@ -266,18 +265,19 @@ jobs:
       - notify_on_failure
 
   deploy-frontend:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
       - install_nodejs
       - restore_cache:
-          keys: [frontend-deps]
+          keys: [frontend-cache]
       - run:
           name: Install dependencies
           command: |
             cd frontend
-            npm install
+            npm i
       - run:
           name: Get backend url
           command: |
@@ -298,7 +298,8 @@ jobs:
       - notify_on_failure
 
   deploy-backend:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
@@ -309,12 +310,12 @@ jobs:
       - attach_workspace:
           at: ~/
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-cache]
       - run:
           name: Install dependencies
           command: |
             cd backend
-            npm install
+            npm i
       - run:
           name: Package Backend
           command: |
@@ -337,7 +338,8 @@ jobs:
       - notify_on_failure
 
   smoke-test:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
@@ -371,7 +373,8 @@ jobs:
       - notify_on_failure
 
   cloudfront-update:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
@@ -396,7 +399,8 @@ jobs:
       - notify_on_failure
 
   cleanup:
-    <<: *container2
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
