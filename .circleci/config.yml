@@ -3,6 +3,15 @@ version: 2.1
 orbs: 
   slack: circleci/slack@4.1
 
+defaults: 
+  &container1
+    docker:
+      - image: cimg/node:13.8.0
+  
+  &container2
+    docker:
+      - image: cimg/base:stable
+
 commands:
   notify_on_failure:
     steps:
@@ -77,8 +86,7 @@ commands:
             
 jobs:
   build-frontend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - restore_cache:
@@ -94,8 +102,7 @@ jobs:
           key: frontend-deps
       - notify_on_failure
   build-backend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - restore_cache:
@@ -112,8 +119,7 @@ jobs:
       - notify_on_failure
 
   test-frontend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - restore_cache:
@@ -126,8 +132,7 @@ jobs:
             npm test
       - notify_on_failure
   test-backend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - restore_cache:
@@ -141,8 +146,7 @@ jobs:
       - notify_on_failure
 
   scan-frontend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - restore_cache:
@@ -157,8 +161,7 @@ jobs:
       - notify_on_failure
 
   scan-backend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - restore_cache:
@@ -174,8 +177,7 @@ jobs:
       - notify_on_failure
 
   notify_on_success:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - slack/notify:
           event: pass
@@ -183,8 +185,7 @@ jobs:
           template: success_tagged_deploy_1
 
   deploy-infrastructure:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -221,8 +222,7 @@ jobs:
       - notify_on_failure
       
   configure-infrastructure:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -241,8 +241,7 @@ jobs:
       - notify_on_failure
 
   run-migrations:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -266,8 +265,7 @@ jobs:
       - notify_on_failure
 
   deploy-frontend:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -299,8 +297,7 @@ jobs:
       - notify_on_failure
 
   deploy-backend:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -339,8 +336,7 @@ jobs:
       - notify_on_failure
 
   smoke-test:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -374,8 +370,7 @@ jobs:
       - notify_on_failure
 
   cloudfront-update:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -400,8 +395,7 @@ jobs:
       - notify_on_failure
 
   cleanup:
-    docker:
-      - image: cimg/base:stable
+    <<: *container2
     steps:
       - checkout
       - install_awscli
@@ -456,4 +450,4 @@ workflows:
       - cleanup:
           requires: [cloudfront-update]
       - notify_on_success:
-          requires: [run-migrations]
+          requires: [cleanup]
