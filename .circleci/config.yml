@@ -240,8 +240,7 @@ jobs:
       - notify_on_failure
 
   run-migrations:
-    docker:
-      - image: cimg/base:stable
+    <<: *container1
     steps:
       - checkout
       - install_awscli
@@ -249,7 +248,7 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm install
+            npm i
             npm -v
             npm run migrations > migrations_dump.txt
      
