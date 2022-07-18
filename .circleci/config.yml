@@ -8,9 +8,9 @@ defaults:
     docker:
       - image: cimg/node:13.8.0
   
-  &container2
-    docker:
-      - image: cimg/base:stable
+  # &container2
+  #   docker:
+  #     - image: cimg/base:stable
 
 commands:
   notify_on_failure:
