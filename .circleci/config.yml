@@ -130,19 +130,19 @@ jobs:
             npm i
             npm test
       - notify_on_failure
-  # test-backend:
-  #   <<: *container1
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [backend-cache]
-  #     - run:
-  #         name: Back-end Unit Test
-  #         command: |
-  #           cd backend
-  #           npm i
-  #           npm test
-  #     - notify_on_failure
+  test-backend:
+    <<: *container1
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-cache]
+      - run:
+          name: Back-end Unit Test
+          command: |
+            cd backend
+            npm i
+            npm test
+      - notify_on_failure
 
   # scan-frontend:
   #   <<: *container1
@@ -431,8 +431,8 @@ workflows:
       - build-backend
       - test-frontend:
           requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
+      - test-backend:
+          requires: [build-backend]
       # - scan-frontend:
       #     requires: [test-frontend]
       # - scan-backend:
