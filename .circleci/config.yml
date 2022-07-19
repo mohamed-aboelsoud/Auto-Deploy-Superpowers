@@ -144,20 +144,20 @@ jobs:
             npm test
       - notify_on_failure
 
-  # scan-frontend:
-  #   <<: *container1
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [frontend-cache]
-  #     - run:
-  #         name: Front-end Scan
-  #         command: |
-  #           cd frontend
-  #           npm i
-  #           npm audit fix --force --audit-level=critical
-  #           npm audit --audit-level=critical
-  #     - notify_on_failure
+  scan-frontend:
+    <<: *container1
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-cache]
+      - run:
+          name: Front-end Scan
+          command: |
+            cd frontend
+            npm i
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
+      - notify_on_failure
 
   # scan-backend:
   #   <<: *container1
@@ -433,8 +433,8 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [test-frontend]
+      - scan-frontend:
+          requires: [test-frontend]
       # - scan-backend:
       #     requires: [test-backend]
       # - deploy-infrastructure:
