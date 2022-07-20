@@ -280,12 +280,12 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/node:13.8.0
     steps:
       - checkout
-      # - install_awscli
+      - install_awscli
       - install_nodejs
-      - install_packages
+      # - install_packages
       - restore_cache:
           keys: [frontend-cache]
       - run:
@@ -330,9 +330,9 @@ jobs:
   #         name: Install dependencies
   #         command: |
   #           cd backend
-  #           npm install
+  #           npm i
   #     - run:
-  #         name: Package Backend
+  #         name: Backend Package
   #         command: |
   #           cd backend
   #           npm run build
