@@ -7,9 +7,6 @@ defaults:
   &container1
     docker:
       - image: cimg/node:13.8.0
-  # &container2
-  #   docker:
-  #     - image: cimg/node:13.8.0
   
 commands:
   notify_on_failure:
@@ -27,15 +24,15 @@ commands:
             yum install -y tar
             yum install -y gzip   
   
-  # install_awscli:
-  #   description: Install AWS CLI v2
-  #   steps:
-  #     - run:
-  #         name: Install AWS CLI v2
-  #         command: |
-  #           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #           unzip awscliv2.zip
-  #           sudo ./aws/install
+  install_awscli:
+    description: Install AWS CLI v2
+    steps:
+      - run:
+          name: Install AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
 
   install_ansible:
     description: Install Ansible
@@ -72,7 +69,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
 
   revert-migrations:
-    description: Revert the last migration
+    description: Revert the last migration in case of Failure
     parameters:
       Workflow_ID:
         type: string
@@ -87,7 +84,7 @@ commands:
             if (( $SUCCESS == 1 ));
             then
               cd ~/project/backend
-              npm install
+              npm i
               npm run migration:revert
             fi
             
@@ -183,14 +180,14 @@ jobs:
             npm audit --audit-level=critical
       - notify_on_failure
 
-  # notify_on_success:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - slack/notify:
-  #         event: pass
-  #         channel: notifications
-  #         template: success_tagged_deploy_1
+  notify_on_success:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          event: pass
+          channel: notifications
+          template: success_tagged_deploy_1
 
   deploy-infrastructure:
     docker:
