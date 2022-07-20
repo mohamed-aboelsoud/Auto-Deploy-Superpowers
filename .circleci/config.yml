@@ -22,10 +22,10 @@ commands:
   install_packages:
     description: Install tar and gzip packages
     steps:
-      run:
-        command: |
-          yum install -y tar
-          yum install -y gzip   
+      - run:
+          command: |
+            yum install -y tar
+            yum install -y gzip   
   
   # install_awscli:
   #   description: Install AWS CLI v2
