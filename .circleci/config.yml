@@ -159,21 +159,21 @@ jobs:
             npm audit --audit-level=critical
       - notify_on_failure
 
-  # scan-backend:
-  #   <<: *container1
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [backend-cache]
-  #     - run:
-  #         name: Back-end Scan
-  #         command: |
-  #           cd backend
-  #           npm i
-  #           npm audit fix --force --audit-level=critical
-  #           npm audit fix --force --audit-level=critical
-  #           npm audit --audit-level=critical
-  #     - notify_on_failure
+  scan-backend:
+    <<: *container1
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-cache]
+      - run:
+          name: Back-end Scan
+          command: |
+            cd backend
+            npm i
+            npm audit fix --force --audit-level=critical
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
+      - notify_on_failure
 
   # notify_on_success:
   #   docker:
@@ -435,8 +435,8 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [test-frontend]
-      # - scan-backend:
-      #     requires: [test-backend]
+      - scan-backend:
+          requires: [test-backend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
