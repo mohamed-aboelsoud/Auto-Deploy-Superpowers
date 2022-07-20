@@ -415,11 +415,11 @@ jobs:
 
   cleanup:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/node:13.8.0
     steps:
       - checkout
-      # - install_awscli
-      - install_packages      
+      - install_awscli
+      # - install_packages      
       - install_nodejs
       - run:
           name: Remove old stacks and files
