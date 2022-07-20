@@ -1,2 +1,2 @@
 URL01: https://github.com/mohamed-aboelsoud/Auto-Deploy-Superpowers
-URL02: http://udapeople-d4f26cc.s3-us-west-2.amazonaws.com/index.html
+URL02: http://udapeople-8a7b8d0.s3-us-west-2.amazonaws.com/index.html
