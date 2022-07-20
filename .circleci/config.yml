@@ -279,8 +279,7 @@ jobs:
       - notify_on_failure
 
   deploy-frontend:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - install_awscli
@@ -353,8 +352,7 @@ jobs:
       - notify_on_failure
 
   smoke-test:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - install_awscli
@@ -388,8 +386,7 @@ jobs:
       - notify_on_failure
 
   cloudfront-update:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - install_awscli
@@ -414,12 +411,10 @@ jobs:
       - notify_on_failure
 
   cleanup:
-    docker:
-      - image: cimg/node:13.8.0
+    <<: *container1
     steps:
       - checkout
       - install_awscli
-      # - install_packages      
       - install_nodejs
       - run:
           name: Remove old stacks and files
